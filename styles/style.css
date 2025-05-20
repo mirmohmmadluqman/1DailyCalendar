@@ -1,0 +1,180 @@
+/* Directory: 1DailyCalender/styles/calendar.css */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.5s, color 0.5s;
+}
+
+:root {
+  --bg: #f0f0f0;
+  --text: #222;
+  --card-bg: #fff;
+  --accent: #007bff;
+}
+
+.dark {
+  --bg: #1e1e1e;
+  --text: #e0e0e0;
+  --card-bg: #2c2c2c;
+  --accent: #4dabf7;
+}
+
+.calendar-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.theme-toggle button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.theme-toggle button:hover {
+  transform: rotate(20deg);
+}
+
+.search-bar {
+  margin: 1rem 0;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.calendar-nav button {
+  padding: 0.5rem 1rem;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.calendar-nav button:hover {
+  background-color: darken(var(--accent), 10%);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar-grid div {
+  padding: 1rem;
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.calendar-grid div:hover {
+  transform: scale(1.05);
+}
+
+.note-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s;
+}
+
+.note-popup.hidden {
+  display: none;
+}
+
+.popup-card {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 15px;
+  width: 300px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.popup-card input,
+.popup-card textarea {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.popup-card button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.popup-card button:hover {
+  background-color: darken(var(--accent), 10%);
+}
+
+#closePopup {
+  float: right;
+  cursor: pointer;
+}
+
+.data-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.data-actions button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: var(--accent);
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.data-actions button:hover {
+  background-color: darken(var(--accent), 10%);
+}

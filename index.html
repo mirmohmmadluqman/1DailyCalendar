@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>1DailyCalendar</title>
+<link rel="icon" href="Elements/myLogo.png" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #f9f9f9;
+    --text-light: #111;
+    --bg-dark: #121212;
+    --text-dark: #eee;
+    --primary-light: #003087;
+    --primary-dark: #0040c1;
+    --transition-duration: 0.4s;
+    --today-border: #ff2d55;
+  }
+
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    transition: background-color var(--transition-duration), color var(--transition-duration);
+  }
+  body.dark {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background: transparent;
+  }
+
+  .header-title-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  header h1 {
+    font-family: 'Lora', serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+  button {
+    background-color: var(--primary-light);
+    border: none;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+    box-shadow: 0 3px 8px rgba(0, 48, 135, 0.3);
+  }
+  button:hover {
+    background-color: #0040c1;
+    transform: scale(1.05);
+  }
+  button:active {
+    transform: scale(0.95);
+  }
+  body.dark button {
+    background-color: var(--primary-dark);
+    box-shadow: 0 3px 8px rgba(0, 64, 193, 0.6);
+  }
+  body.dark button:hover {
+    background-color: #0052f0;
+  }
+
+  #themeToggleBtn {
+    position: absolute;
+    right: -2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 48, 135, 0.3);
+  }
+  body.dark #themeToggleBtn {
+    box-shadow: 0 2px 5px rgba(0, 64, 193, 0.6);
+  }
+
+  .search-container {
+    position: relative;
+    max-width: 300px;
+    margin-left: 1rem;
+  }
+  #searchBar {
+    width: 100%;
+    max-width: 300px;
+    padding: 0.4rem 2rem 0.4rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  #searchBar:focus {
+    outline: none;
+    border-color: var(--primary-light);
+  }
+  body.dark #searchBar:focus {
+    border-color: var(--primary-dark);
+  }
+  #clearSearch {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1rem;
+    cursor: pointer;
+    display: none;
+  }
+  body.dark #clearSearch {
+    color: var(--text-dark);
+  }
+  #searchBar:not(:placeholder-shown) + #clearSearch {
+    display: block;
+  }
+
+  #calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .day-cell {
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 10px;
+    min-height: 80px;
+    padding: 6px 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  body.dark .day-cell {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-dark);
+  }
+  .day-cell:hover {
+    background-color: var(--primary-light);
+    color: white;
+  }
+  body.dark .day-cell:hover {
+    background: var(--primary-dark);
+    color: white;
+  }
+  .today {
+    border: 2px solid var(--today-border);
+  }
+
+  .day-number {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .note-title {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #notePopup {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 320px;
+    max-width: 90vw;
+    background-color: var(--bg-light);
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    transform: translate(-50%, -50%) scale(0.7) rotateX(30deg);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+  }
+  #notePopup.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1) rotateX(0deg);
+  }
+  body.dark #notePopup {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+  }
+  #notePopup label {
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+  #notePopup input[type="text"] {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
+  }
+  #notePopup textarea {
+    margin-top: 0.5rem;
+    resize: vertical;
+    min-height: 100px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    transition: border-color 0.3s ease;
+  }
+  #notePopup input[type="text"]:focus,
+  #notePopup textarea:focus {
+    outline: none;
+    border-color: var(--primary-light);
+  }
+  body.dark #notePopup input[type="text"],
+  body.dark #notePopup textarea {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-dark);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  body.dark #notePopup label {
+    color: var(--text-dark);
+  }
+  body.dark #notePopup input[type="text"]:focus,
+  body.dark #notePopup textarea:focus {
+    border-color: var(--primary-dark);
+  }
+
+  #overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 900;
+  }
+  #overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #searchResults {
+    position: absolute;
+    top: 3.5rem;
+    left: 1rem;
+    background: var(--bg-light);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    max-height: 200px;
+    width: 300px;
+    overflow-y: auto;
+    border-radius: 10px;
+    z-index: 1100;
+  }
+  #searchResults.dark {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+  }
+  #searchResults div {
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+  }
+  #searchResults div:last-child {
+    border-bottom: none;
+  }
+  #searchResults div:hover {
+    background-color: var(--primary-light);
+    color: white;
+  }
+  body.dark #searchResults div:hover {
+    background-color: var(--primary-dark);
+  }
+  #searchResults mark {
+    background: rgba(0, 48, 135, 0.3);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+  body.dark #searchResults mark {
+    background: rgba(0, 64, 193, 0.4);
+  }
+
+  #noteCounter {
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+  body.dark #noteCounter {
+    color: var(--text-dark);
+  }
+
+  footer {
+    text-align: center;
+    padding: 1rem;
+    border-top: 1px solid #ccc;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  body.dark footer {
+    border-top: 1px solid #444;
+  }
+  .social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .social-buttons button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .social-buttons button:hover {
+    transform: scale(1.2) rotate(360deg);
+    background-color: #0052f0;
+    box-shadow: 0 0 10px rgba(0, 82, 240, 0.5);
+  }
+  body.dark .social-buttons button:hover {
+    box-shadow: 0 0 10px rgba(0, 82, 240, 0.7);
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-title-container">
+    <h1>1DailyCalendar</h1>
+    <button id="themeToggleBtn" aria-label="Toggle Theme">🌙</button>
+  </div>
+  <div class="search-container">
+    <input id="searchBar" type="search" placeholder="Search notes or dates..." autocomplete="off" />
+    <button id="clearSearch" aria-label="Clear search">✖</button>
+  </div>
+  <div class="button-group">
+    <button id="prevMonthBtn" aria-label="Previous Month">◀</button>
+    <button id="nextMonthBtn" aria-label="Next Month">▶</button>
+    <button id="todayBtn" aria-label="Jump to Today">Today</button>
+    <button id="clearAllBtn" aria-label="Clear All Notes">Clear All</button>
+    <button id="guideBtn" onclick="window.location.href='index2.html'">Guide</button>
+    <button id="exportBtn">Export</button>
+    <button id="importBtn">Import</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" />
+  </div>
+</header>
+<div id="calendar" aria-label="Calendar"></div>
+<p id="noteCounter">Notes this month: 0</p>
+<div id="overlay"></div>
+<div id="notePopup" role="dialog" aria-modal="true" aria-labelledby="noteTitleLabel" aria-describedby="noteBodyLabel">
+  <label for="noteTitle" id="noteTitleLabel">Title</label>
+  <input type="text" id="noteTitle" maxlength="50" />
+  <label for="noteBody" id="noteBodyLabel">Details</label>
+  <textarea id="noteBody"></textarea>
+  <div style="margin-top:1rem; text-align:right;">
+    <button id="saveNoteBtn">Save</button>
+    <button id="closeNoteBtn">Close</button>
+  </div>
+</div>
+<div id="searchResults" role="listbox" aria-label="Search Results"></div>
+<footer>
+  <div class="social-buttons">
+    <button onclick="window.open('https://twitter.com/mirmohmadluqman', '_blank')" aria-label="Twitter"><span>🐦</span></button>
+    <button onclick="window.location.href='mailto:mirmohmmadluqman@gmail.com'" aria-label="Email"><span>✉️</span></button>
+  </div>
+</footer>
+<script>
+(() => {
+  const calendarEl = document.getElementById('calendar');
+  const prevMonthBtn = document.getElementById('prevMonthBtn');
+  const nextMonthBtn = document.getElementById('nextMonthBtn');
+  const todayBtn = document.getElementById('todayBtn');
+  const clearAllBtn = document.getElementById('clearAllBtn');
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const importBtn = document.getElementById('importBtn');
+  const importFile = document.getElementById('importFile');
+  const overlay = document.getElementById('overlay');
+  const notePopup = document.getElementById('notePopup');
+  const noteTitleInput = document.getElementById('noteTitle');
+  const noteBodyInput = document.getElementById('noteBody');
+  const saveNoteBtn = document.getElementById('saveNoteBtn');
+  const closeNoteBtn = document.getElementById('closeNoteBtn');
+  const searchBar = document.getElementById('searchBar');
+  const clearSearch = document.getElementById('clearSearch');
+  const searchResults = document.getElementById('searchResults');
+  const noteCounter = document.getElementById('noteCounter');
+
+  let currentYear, currentMonth;
+  let notesData = {};
+  let editingDate = null;
+  let darkTheme = false;
+  const today = new Date();
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth();
+  const todayDate = today.getDate();
+  const todayStr = `${todayYear}-${String(todayMonth+1).padStart(2,'0')}-${String(todayDate).padStart(2,'0')}`;
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  function init() {
+    currentYear = todayYear;
+    currentMonth = todayMonth;
+    loadTheme();
+    loadData();
+    renderCalendar();
+    updateNoteCounter();
+    bindEvents();
+  }
+
+  function loadTheme() {
+    darkTheme = localStorage.getItem('theme') === 'dark';
+    setTheme(darkTheme);
+  }
+  function setTheme(dark) {
+    darkTheme = dark;
+    document.body.classList.toggle('dark', darkTheme);
+    themeToggleBtn.textContent = darkTheme ? '☀️' : '🌙';
+    localStorage.setItem('theme', darkTheme ? 'dark' : 'light');
+  }
+  themeToggleBtn.onclick = () => setTheme(!darkTheme);
+
+  function loadData() {
+    const data = localStorage.getItem('dailyCalendarNotes');
+    if (data) {
+      try {
+        notesData = JSON.parse(data);
+      } catch {
+        notesData = {};
+      }
+    }
+  }
+  function saveData() {
+    localStorage.setItem('dailyCalendarNotes', JSON.stringify(notesData));
+  }
+
+  function renderCalendar() {
+    calendarEl.innerHTML = '';
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const firstWeekday = firstDay.getDay();
+    const daysInMonth = lastDay.getDate();
+    document.querySelector('header h1').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+    for (let i = 0; i < firstWeekday; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'day-cell';
+      calendarEl.appendChild(emptyCell);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      if (dateStr === todayStr) {
+        cell.classList.add('today');
+      }
+      cell.tabIndex = 0;
+      cell.setAttribute('role', 'button');
+      cell.setAttribute('aria-label', `Date ${dateStr}`);
+      cell.dataset.date = dateStr;
+
+      const dayNum = document.createElement('div');
+      dayNum.className = 'day-number';
+      dayNum.textContent = d;
+      cell.appendChild(dayNum);
+
+      if (notesData[dateStr] && notesData[dateStr].title) {
+        const noteTitle = document.createElement('div');
+        noteTitle.className = 'note-title';
+        noteTitle.textContent = notesData[dateStr].title;
+        cell.appendChild(noteTitle);
+      }
+
+      cell.onclick = () => openNoteEditor(dateStr);
+      cell.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') openNoteEditor(dateStr); };
+
+      calendarEl.appendChild(cell);
+    }
+    updateNoteCounter();
+  }
+
+  prevMonthBtn.onclick = () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar();
+  };
+  nextMonthBtn.onclick = () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar();
+  };
+
+  todayBtn.onclick = () => {
+    currentYear = todayYear;
+    currentMonth = todayMonth;
+    renderCalendar();
+  };
+
+  clearAllBtn.onclick = () => {
+    if (confirm('Are you sure you want to clear all notes? This action cannot be undone.')) {
+      notesData = {};
+      saveData();
+      renderCalendar();
+    }
+  };
+
+  function updateNoteCounter() {
+    const monthPrefix = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`;
+    const count = Object.keys(notesData).filter(date => date.startsWith(monthPrefix)).length;
+    noteCounter.textContent = `Notes this month: ${count}`;
+  }
+
+  function openNoteEditor(dateStr) {
+    editingDate = dateStr;
+    const note = notesData[dateStr] || {title: '', body: ''};
+    noteTitleInput.value = note.title;
+    noteBodyInput.value = note.body;
+    notePopup.classList.add('open');
+    overlay.classList.add('open');
+    noteTitleInput.focus();
+  }
+
+  function closeNoteEditor() {
+    notePopup.classList.remove('open');
+    overlay.classList.remove('open');
+    editingDate = null;
+  }
+  closeNoteBtn.onclick = closeNoteEditor;
+  overlay.onclick = closeNoteEditor;
+
+  saveNoteBtn.onclick = () => {
+    if (!editingDate) return;
+    const title = noteTitleInput.value.trim();
+    const body = noteBodyInput.value.trim();
+    if (title === '' && body === '') {
+      delete notesData[editingDate];
+    } else {
+      notesData[editingDate] = {title, body};
+    }
+    saveData();
+    renderCalendar();
+    closeNoteEditor();
+  };
+
+  exportBtn.onclick = () => {
+    const blob = new Blob([JSON.stringify(notesData, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `1DailyCalendar-notes-${currentYear}-${currentMonth+1}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  importBtn.onclick = () => {
+    importFile.value = null;
+    importFile.click();
+  };
+  importFile.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const importedData = JSON.parse(event.target.result);
+        if (typeof importedData !== 'object') throw new Error('Invalid format');
+        for (const [date, note] of Object.entries(importedData)) {
+          if (typeof note.title === 'string' && typeof note.body === 'string') {
+            notesData[date] = note;
+          }
+        }
+        saveData();
+        renderCalendar();
+        alert('Import successful!');
+      } catch {
+        alert('Failed to import notes. Invalid file format.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  function debounce(fn, ms) {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  const performSearch = debounce((q) => {
+    searchResults.innerHTML = '';
+    if (!q) {
+      searchResults.style.display = 'none';
+      return;
+    }
+    const words = q.split(/\s+/).filter(w => w.length > 0);
+    const results = [];
+    for (const [date, note] of Object.entries(notesData)) {
+      if (words.some(w => 
+        date.includes(w) ||
+        note.title.toLowerCase().includes(w) ||
+        note.body.toLowerCase().includes(w)
+      )) {
+        results.push({date, title: note.title, body: note.body});
+      }
+    }
+    if (results.length === 0) {
+      const noResult = document.createElement('div');
+      noResult.textContent = 'No results found';
+      searchResults.appendChild(noResult);
+    } else {
+      for (const r of results) {
+        const div = document.createElement('div');
+        div.tabIndex = 0;
+        const highlightedTitle = r.title ? r.title.replace(new RegExp(`(${words.join('|')})`, 'gi'), '<mark>$1</mark>') : '(No Title)';
+        div.innerHTML = `${r.date}: ${highlightedTitle}`;
+        div.onclick = () => {
+          const [y, m, d] = r.date.split('-').map(Number);
+          currentYear = y;
+          currentMonth = m - 1;
+          renderCalendar();
+          openNoteEditor(r.date);
+          searchResults.style.display = 'none';
+          searchBar.value = '';
+        };
+        div.onkeypress = (e) => {
+          if (e.key === 'Enter' || e.key === ' ') div.click();
+        };
+        searchResults.appendChild(div);
+      }
+    }
+    searchResults.style.display = 'block';
+    searchResults.classList.toggle('dark', darkTheme);
+  }, 300);
+
+  searchBar.oninput = () => {
+    const q = searchBar.value.trim().toLowerCase();
+    performSearch(q);
+  };
+
+  clearSearch.onclick = () => {
+    searchBar.value = '';
+    searchResults.style.display = 'none';
+    searchBar.focus();
+  };
+
+  document.addEventListener('click', (e) => {
+    if (!searchBar.contains(e.target) && !searchResults.contains(e.target) && !clearSearch.contains(e.target)) {
+      searchResults.style.display = 'none';
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey) {
+      if (e.key === 't') {
+        e.preventDefault();
+        todayBtn.click();
+      } else if (e.key === 'e') {
+        e.preventDefault();
+        exportBtn.click();
+      } else if (e.key === 'i') {
+        e.preventDefault();
+        importBtn.click();
+      } else if (e.shiftKey && e.key.toUpperCase() === 'C') {
+        e.preventDefault();
+        clearAllBtn.click();
+      }
+    }
+  });
+
+  function bindEvents() {}
+
+  init();
+})();
+</script>
+</body>
+</html>
