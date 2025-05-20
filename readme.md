@@ -9,6 +9,13 @@ A `README.md` file is essential for providing an overview, setup instructions, u
 
 A simple, accessible, and lightweight web application for managing daily notes on a calendar. Built with HTML, CSS, and JavaScript, 1DailyCalendar allows users to add, edit, search, and manage notes for any date, with features like dark/light mode, import/export functionality, and more.
 
+## Platforms
+
+- **Website**
+- **Andriod**
+- **Windows**
+- **Linux**
+
 ## Features
 
 - **Calendar View**: Displays a monthly grid where you can add notes to any day.
