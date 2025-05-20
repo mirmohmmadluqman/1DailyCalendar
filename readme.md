@@ -164,7 +164,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Built with ❤️ by [Your Name] on May 19, 2025.
+Built with ❤️ by [Mir Mohmmad Luqman] on May 19, 2025.
 ```
 
 ---
@@ -209,7 +209,7 @@ Built with ❤️ by [Your Name] on May 19, 2025.
     - Acknowledges the Lora font used for the header.
 
 11. **Footer**:
-    - Adds a personal touch with your name and the current date (May 19, 2025).
+    - Adds a personal touch with Mir Mohmmad Luqman and the current date (May 19, 2025).
 
 ---
 
@@ -218,31 +218,7 @@ Built with ❤️ by [Your Name] on May 19, 2025.
 - **Screenshots**: I included a placeholder for screenshots. To add them, take screenshots of the app in both light and dark modes, save them in a `screenshots/` directory (e.g., `screenshots/light-mode.png`), and update the paths in the `README.md`. If you need help generating screenshots, let me know!
 - **Live Demo**: If you host the app (e.g., on GitHub Pages), add the URL to the "Demo" section.
 - **License**: I assumed the MIT License, which is common for open-source projects. If you prefer a different license (e.g., GPL, Apache), let me know, and I'll update it. You'll also need to create a `LICENSE` file in the repository.
-- **Your Name**: Replace `[Your Name]` in the footer with your actual name or handle.
+- **Mir Mohmmad Luqman**: Replace `[Mir Mohmmad Luqman]` in the footer with your actual name or handle.
 - **Directory Structure**: Ensure `Elements/myLogo.png` exists for the favicon. If you don't have this file, either remove the favicon reference in `index.html` and `index2.html` or add a placeholder image.
 
 ---
-
-### Next Steps
-
-1. **Create the `README.md` File**:
-   - Copy the above Markdown content into a file named `README.md` in the root of your `1DailyCalendar/` directory.
-
-2. **Verify the Directory**:
-   - Ensure the structure matches:
-     ```
-     1DailyCalendar/
-     ├── Elements/
-     │   └── myLogo.png
-     ├── index.html
-     ├── index2.html
-     └── README.md
-     ```
-
-3. **Host the Project (Optional)**:
-   - If you want to share the app publicly, host it on GitHub Pages, Netlify, or another static hosting service, and update the "Demo" section with the live URL.
-
-4. **Add Screenshots (Optional)**:
-   - Take screenshots and add them to the `README.md` as described in the "Screenshots Setup" section.
-
-If you need further adjustments to the `README.md` (e.g., adding a FAQ, more screenshots, or deployment instructions), let me know!
